@@ -2,20 +2,24 @@ name: Auto Sync Fork with Upstream
 
 on:
   schedule:
-    - cron: '0 */6 * * *'  # 每6小时自动同步一次
-  workflow_dispatch:      # 允许你手动点运行
+    - cron: '0 */6 * * *'  # 每6小时同步一次
+  workflow_dispatch:      # 允许手动运行
 
 jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
-      - name: Sync fork with upstream
-        uses: tgymnich/fork-sync@v2.0  # 最新稳定版
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
-          owner: KuekHaoYang
-          repo: KVideo
-          base: main
-          head: main
-          merge_method: merge
-          auto_approve: true
+          fetch-depth: 0
+
+      - name: Sync fork
+        uses: aormsby/fork-sync@v2.1
+        with:
+          upstream-owner: KuekHaoYang
+          upstream-repo: KVideo
+          upstream-branch: main
+          target-branch: main
+          merge-method: merge
           token: ${{ secrets.GITHUB_TOKEN }}
